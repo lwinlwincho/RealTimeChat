@@ -12,9 +12,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
-class MainViewModel : ViewModel() {
+class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
 
     val chatListLiveData = MutableLiveData<List<Chat>>()
+
+    val isLoggedinLiveData = MutableLiveData<Boolean>()
 
     private val chatNoteReference: DatabaseReference = Firebase.database.reference.child("chat")
 
@@ -58,6 +60,8 @@ class MainViewModel : ViewModel() {
                 error.toException().printStackTrace()
             }
         })
+
+        auth.addAuthStateListener ( this )
     }
 
     fun sendMessage(message: String) {
@@ -66,4 +70,14 @@ class MainViewModel : ViewModel() {
             child("message").setValue(message)
         }
     }
+
+    override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
+        val isLoggedIn = firebaseAuth.currentUser!=null
+        isLoggedinLiveData.postValue(isLoggedIn)
+    }
+
+    fun logOut() {
+        auth.signOut()
+    }
+
 }

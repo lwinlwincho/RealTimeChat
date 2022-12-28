@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -14,37 +15,35 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
 
-    private lateinit var auth: FirebaseAuth
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth= Firebase.auth
-
-        binding.btnRegister.setOnClickListener{
-            val intent= Intent(this,RegisterActivity::class.java)
+        binding.btnRegister.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+        }
+
+        viewModel.loginViewEventLiveData.observe(this) { event ->
+            when (event) {
+                LoginViewEvent.Success -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                is LoginViewEvent.Error -> {
+                    Toast.makeText(baseContext, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         binding.btnLogin.setOnClickListener {
             val email = binding.txtEtEmail.text.toString()
             val password = binding.txtEtPassword.text.toString()
+            viewModel.login(email,password)
 
-            auth.signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this){task->
-                    if(task.isSuccessful){
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finishAffinity()
-                    }
-                    else{
-                        Log.w("LoginActivity", "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
         }
 
     }

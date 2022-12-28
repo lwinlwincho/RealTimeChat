@@ -43,7 +43,7 @@ kapt {
 
 dependencies {
 
-    def activity_version = "1.6.1"
+    def activity_version = "1.5.1"
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
@@ -60,8 +60,8 @@ dependencies {
     // Kotlin ktx for viewmodel
     implementation "androidx.activity:activity-ktx:$activity_version"
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'

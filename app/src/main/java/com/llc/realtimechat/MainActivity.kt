@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.chatListLiveData.observe(this, Observer{chatList->
+        viewModel.chatListLiveData.observe(this, Observer { chatList ->
             chatRecyclerViewAdapter.submitList(chatList)
         })
 
@@ -49,23 +49,23 @@ class MainActivity : AppCompatActivity() {
             val message = binding.etMessage.text.toString()
             viewModel.sendMessage(message)
         }
-    }
 
-    private fun logOut(){
-        auth.signOut()
-        val intent= Intent(this,LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        viewModel.isLoggedinLiveData.observe(this) { isLoggedIn ->
+            if (!isLoggedIn) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main,menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId== R.id.action_logout){
-            logOut()
+        if (item.itemId == R.id.action_logout) {
+            viewModel.logOut()
         }
         return super.onOptionsItemSelected(item)
     }
