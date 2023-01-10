@@ -6,19 +6,23 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.llc.realtimechat.databinding.ActivityMainBinding
+import com.llc.realtimechat.detail.DetailActivity
+import com.llc.realtimechat.login.LoginActivity
+import com.llc.realtimechat.model.Chat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),OnItemClickListener{
 
     private lateinit var binding: ActivityMainBinding
 
-    private val chatRecyclerViewAdapter = ChatRecyclerViewAdapter()
+    private val chatRecyclerViewAdapter: ChatRecyclerViewAdapter by lazy {
+        ChatRecyclerViewAdapter(this)
+    }
 
     private lateinit var auth: FirebaseAuth
 
@@ -29,9 +33,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.chatListLiveData.observe(this, Observer { chatList ->
+        viewModel.chatListLiveData.observe(this) { chatList ->
             chatRecyclerViewAdapter.submitList(chatList)
-        })
+        }
 
         auth = Firebase.auth
         if (auth.currentUser == null) {
@@ -46,7 +50,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSend.setOnClickListener {
+
             val message = binding.etMessage.text.toString()
+
             viewModel.sendMessage(message)
         }
 
@@ -57,6 +63,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -69,4 +76,20 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onCompleteTask(chat: Chat) {
+        TODO("Not yet implemented")
+    }
+
+    override fun openDetails(chat: Chat) {
+        val intent = Intent(this, DetailActivity::class.java)
+        with(intent) {
+            putExtra("chatId", chat.chatId)
+            putExtra("sender",chat.sender)
+            putExtra("message",chat.message)
+            startActivity(this)
+        }
+    }
+
+
 }

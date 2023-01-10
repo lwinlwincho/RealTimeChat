@@ -1,11 +1,13 @@
-package com.llc.realtimechat
+package com.llc.realtimechat.login
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.llc.realtimechat.R
+import com.llc.realtimechat.SingleLiveEvent
 
 class LoginViewModel : ViewModel() {
 
@@ -13,7 +15,9 @@ class LoginViewModel : ViewModel() {
 
     val loginViewEventLiveData = SingleLiveEvent<LoginViewEvent>()
 
+
     fun login(email: String, password: String) {
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

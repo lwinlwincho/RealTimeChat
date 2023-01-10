@@ -57,6 +57,9 @@ dependencies {
     // Add the dependency for the Firebase Authentication library
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.4.0'
+
     // Kotlin ktx for viewmodel
     implementation "androidx.activity:activity-ktx:$activity_version"
 

@@ -53,6 +53,14 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:text="@string/btn_login" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_googel_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            app:icon="@drawable/ic_baseline_emoji_emotions_24"
+            android:text="@string/btn_google_login" />
+
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton

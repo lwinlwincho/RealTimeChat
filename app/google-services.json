@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "199834149869",
+    "firebase_url": "https://realtimechatapp-1a38b-default-rtdb.firebaseio.com",
     "project_id": "realtimechatapp-1a38b",
     "storage_bucket": "realtimechatapp-1a38b.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "199834149869-vmlb2bjpnag7nmrc4fr3guskueaa24q6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.llc.realtimechat",
+            "certificate_hash": "319863994a31a741d037caf4b2e028def6a76af7"
+          }
+        },
         {
           "client_id": "199834149869-kves5f59n7gggltf5boaltr3q5vhdelh.apps.googleusercontent.com",
           "client_type": 3

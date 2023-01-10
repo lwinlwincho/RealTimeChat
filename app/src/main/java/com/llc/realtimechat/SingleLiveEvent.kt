@@ -6,8 +6,10 @@ import androidx.lifecycle.Observer
 import java.util.concurrent.atomic.AtomicBoolean
 
 class SingleLiveEvent<T> : MutableLiveData<T>() {
-
+    //Thread A { a=2 result = a+2}
+    //Thread B {a=3]
     //AtomicBoolean avoid to get two results between Thread A running and set value to B
+   // private var isPending=false
     private var isPending:AtomicBoolean = AtomicBoolean(false)
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
@@ -22,7 +24,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
             if (isPending.compareAndSet(true,false)) {
                 observer.onChanged(value)
             }
-
         }
     }
 

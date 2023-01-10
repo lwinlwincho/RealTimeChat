@@ -3,6 +3,7 @@ package com.llc.realtimechat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserInfo
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,6 +12,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.llc.realtimechat.model.Chat
 
 class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
 
@@ -28,6 +30,7 @@ class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 /* val chatList = snapshot.children.map {
+                 //if setvalue() doesn't complete,it return null
                      val message = it.child("message").getValue<String>() ?: ""
                      val sender = it.child("sender").getValue<String>() ?: ""
                      val chatId = it.key ?: ""
@@ -42,14 +45,17 @@ class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
 
                 val chatList = mutableListOf<Chat>()
                 snapshot.children.forEach {
+
                     //if setvalue() doesn't complete,it doesn't return
-                    val message = it.child("message").getValue<String>() ?: return@forEach
                     val sender = it.child("sender").getValue<String>() ?: return@forEach
+                    val message = it.child("message").getValue<String>() ?: return@forEach
                     val chatId = it.key ?: return@forEach
+
                     val chat = Chat(
                         chatId = chatId,
-                        message = message,
-                        userName = sender
+                        sender = sender,
+                        message = message
+
                     )
                     chatList.add(chat)
                 }
@@ -79,5 +85,4 @@ class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
     fun logOut() {
         auth.signOut()
     }
-
 }
