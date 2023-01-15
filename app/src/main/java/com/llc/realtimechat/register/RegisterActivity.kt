@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,7 @@ class RegisterActivity : AppCompatActivity() {
     private val viewModel: RegisterViewModel by viewModels()
 
     private val PICK_IMAGE_REQUEST = 1
-    private lateinit var filePath: Uri
+    private var filePath: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +31,9 @@ class RegisterActivity : AppCompatActivity() {
 
         viewModel.registerViewEventLiveData.observe(this) { event ->
             when (event) {
+                is RegisterViewEvent.Loading -> binding.progressBar.visibility = View.VISIBLE
                 is RegisterViewEvent.Success -> {
+                    binding.progressBar.visibility = View.INVISIBLE
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     //Login<Register<Main if you finish Register (Login<-<Main) when user click back btn it reach from Main to Login
@@ -39,6 +42,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
 
                 is RegisterViewEvent.Error -> {
+                    binding.progressBar.visibility = View.INVISIBLE
                     Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
                 }
                 else -> {}
@@ -51,7 +55,14 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.txtEtPassword.text.toString()
             val passwordAgain = binding.txtEtPasswordAgain.text.toString()
 
-            viewModel.register(filePath,userName, email, password, passwordAgain)
+            if (
+                filePath != null && userName.isNotBlank()
+                && email.isNotBlank()
+                && password.isNotBlank()
+                && password == passwordAgain
+            ) {
+                viewModel.registerWithEmail(filePath, userName, email, password)
+            }
         }
 
         binding.imvProfile.setOnClickListener {
