@@ -8,10 +8,12 @@
         <entry key="..\:/RealTimeChat/app/src/main/res/layout/activity_detail.xml" value="0.17239583333333333" />
         <entry key="..\:/RealTimeChat/app/src/main/res/layout/activity_login.xml" value="0.18" />
         <entry key="..\:/RealTimeChat/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/RealTimeChat/app/src/main/res/layout/activity_register.xml" value="0.33" />
+        <entry key="..\:/RealTimeChat/app/src/main/res/layout/activity_register.xml" value="0.18" />
         <entry key="..\:/RealTimeChat/app/src/main/res/layout/item_chat.xml" value="0.22" />
+        <entry key="..\:/RealTimeChat/app/src/main/res/layout/one_activity.xml" value="0.18" />
         <entry key="..\:/RealTimeChat/app/src/main/res/menu/menu_main.xml" value="0.5942028985507246" />
         <entry key="..\:/RealTimeChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/RealTimeChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>

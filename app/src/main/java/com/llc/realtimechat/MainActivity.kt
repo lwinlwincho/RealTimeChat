@@ -56,6 +56,11 @@ class MainActivity : AppCompatActivity(),OnItemClickListener{
             viewModel.sendMessage(message)
         }
 
+        binding.imvProfile.setOnClickListener{
+            val intent=Intent(this,OneActivity::class.java)
+            startActivity(intent)
+        }
+
         viewModel.isLoggedinLiveData.observe(this) { isLoggedIn ->
             if (!isLoggedIn) {
                 val intent = Intent(this, LoginActivity::class.java)
@@ -63,7 +68,6 @@ class MainActivity : AppCompatActivity(),OnItemClickListener{
             }
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

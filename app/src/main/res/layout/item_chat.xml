@@ -12,14 +12,14 @@
         android:id="@+id/tv_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14dp"
+        android:textSize="16dp"
         tools:text="Mh Ma" />
 
     <TextView
         android:id="@+id/tv_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16dp"
+        android:textSize="18dp"
         android:layout_below="@id/tv_sender"
         android:textColor="@color/black"
         tools:text="Hello Im sjo joajej alkaf" />

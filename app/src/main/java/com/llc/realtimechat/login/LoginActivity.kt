@@ -1,7 +1,6 @@
 package com.llc.realtimechat.login
 
 import android.app.Activity
-import android.app.Instrumentation
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -16,7 +15,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.auth.ktx.oAuthCredential
 import com.google.firebase.ktx.Firebase
 import com.llc.realtimechat.MainActivity
 import com.llc.realtimechat.R

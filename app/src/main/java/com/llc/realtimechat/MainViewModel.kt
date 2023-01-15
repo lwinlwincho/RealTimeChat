@@ -1,10 +1,13 @@
 package com.llc.realtimechat
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserInfo
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -55,7 +58,6 @@ class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
                         chatId = chatId,
                         sender = sender,
                         message = message
-
                     )
                     chatList.add(chat)
                 }
@@ -71,6 +73,7 @@ class MainViewModel : ViewModel(), FirebaseAuth.AuthStateListener {
     }
 
     fun sendMessage(message: String) {
+
         chatNoteReference.push().apply {
             child("sender").setValue(auth.currentUser?.email ?: "Dammy User")
             child("message").setValue(message)
