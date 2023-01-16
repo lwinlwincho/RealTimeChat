@@ -3,6 +3,7 @@ package com.llc.realtimechat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -15,6 +16,7 @@ import com.llc.realtimechat.databinding.ActivityMainBinding
 import com.llc.realtimechat.detail.DetailActivity
 import com.llc.realtimechat.login.LoginActivity
 import com.llc.realtimechat.model.Chat
+import com.llc.realtimechat.userprofile.ProfileActivity
 
 class MainActivity : AppCompatActivity(),OnItemClickListener{
 
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity(),OnItemClickListener{
         }
 
         binding.imvProfile.setOnClickListener{
-            val intent=Intent(this,OneActivity::class.java)
+            val intent=Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 

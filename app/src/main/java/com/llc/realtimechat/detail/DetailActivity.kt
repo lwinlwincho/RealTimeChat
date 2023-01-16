@@ -22,7 +22,6 @@ class DetailActivity : AppCompatActivity() {
         binding.txtEtSender.setText(intent.getStringExtra("sender"))
         binding.txtEtMessage.setText(intent.getStringExtra("message"))
 
-
         binding.btnUpdate.setOnClickListener {
 
             val chatId = intent.getStringExtra("chatId")
@@ -60,5 +59,4 @@ class DetailActivity : AppCompatActivity() {
         }
 
     }
-
 }

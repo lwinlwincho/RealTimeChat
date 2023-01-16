@@ -10,6 +10,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.llc.realtimechat.SingleLiveEvent
+import com.llc.realtimechat.detail.UpdateChatEvent
+import com.llc.realtimechat.model.Chat
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.tasks.await
@@ -19,10 +21,10 @@ class RegisterViewModel : ViewModel() {
     val registerViewEventLiveData = SingleLiveEvent<RegisterViewEvent>()
 
     private val auth: FirebaseAuth = Firebase.auth
+
     private val storageReference: StorageReference = FirebaseStorage.getInstance().reference
 
     private val db = FirebaseFirestore.getInstance()
-    //private val db = Firebase.firestore
 
     fun registerWithEmail(
         filePath: Uri?,
@@ -35,6 +37,7 @@ class RegisterViewModel : ViewModel() {
             try {
                 // Create Auth
                 val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+
                 if (authResult.user != null) {
 
                     val imageRef = storageReference.child("images/" + UUID.randomUUID().toString())
@@ -52,9 +55,9 @@ class RegisterViewModel : ViewModel() {
                         "password" to password
                     )
 
-                    db.collection("user").add(userInfo).await()
+                    val documentRef=db.collection("user").add(userInfo).await()
 
-                    registerViewEventLiveData.postValue(RegisterViewEvent.Success)
+                    registerViewEventLiveData.postValue(RegisterViewEvent.Success(documentRef.id))
                 }
             } catch (e: Exception) {
                 registerViewEventLiveData.postValue(RegisterViewEvent.Error(e.message.toString()))
@@ -66,35 +69,29 @@ class RegisterViewModel : ViewModel() {
         filePath: Uri?,
         userName: String,
         email: String,
-        password: String,
-        passwordAgain: String
+        password: String
     ) {
         viewModelScope.launch {
             try {
-                if (password != passwordAgain) {
-                    registerViewEventLiveData.postValue(RegisterViewEvent.Error("Password does not match"))
-                } else {
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnSuccessListener { task ->
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener { task ->
 
-                            uploadAndDownloadImage(
-                                filePath = filePath,
-                                success = { imageUrl ->
-                                    val userInfo = hashMapOf(
-                                        "profile" to imageUrl,
-                                        "userName" to userName,
-                                        "email" to email,
-                                        "password" to password
-                                    )
-                                    uploadUserInfo(userInfo)
-                                }
-                            )
-                        }
-                        .addOnFailureListener {
-                            registerViewEventLiveData.postValue(RegisterViewEvent.Error(it.localizedMessage.orEmpty()))
-                        }
-                }
-
+                        uploadAndDownloadImage(
+                            filePath = filePath,
+                            success = { imageUrl ->
+                                val userInfo = hashMapOf(
+                                    "profile" to imageUrl,
+                                    "userName" to userName,
+                                    "email" to email,
+                                    "password" to password
+                                )
+                                uploadUserInfo(userInfo)
+                            }
+                        )
+                    }
+                    .addOnFailureListener {
+                        registerViewEventLiveData.postValue(RegisterViewEvent.Error(it.localizedMessage.orEmpty()))
+                    }
             } catch (e: Exception) {
                 registerViewEventLiveData.postValue(RegisterViewEvent.Error(e.message.toString()))
             }
@@ -104,6 +101,7 @@ class RegisterViewModel : ViewModel() {
     private fun uploadAndDownloadImage(filePath: Uri?, success: (String) -> Unit) {
         val ref = storageReference.child("images/" + UUID.randomUUID().toString())
         val uploadTask = ref.putFile(filePath!!)
+
         uploadTask.addOnSuccessListener {
             ref.downloadUrl.addOnSuccessListener { imageUri ->
                 success.invoke(imageUri.toString())
@@ -118,7 +116,7 @@ class RegisterViewModel : ViewModel() {
             .add(user)
             .addOnSuccessListener {
                 registerViewEventLiveData.postValue(
-                    RegisterViewEvent.Success
+                    RegisterViewEvent.Success(it.id)
                 )
             }
             .addOnFailureListener {
@@ -131,6 +129,6 @@ class RegisterViewModel : ViewModel() {
 
 sealed class RegisterViewEvent {
     object Loading : RegisterViewEvent()
-    object Success : RegisterViewEvent()
+    data class Success(val id : String) : RegisterViewEvent()
     data class Error(val message: String) : RegisterViewEvent()
 }

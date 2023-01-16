@@ -32,6 +32,7 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.registerViewEventLiveData.observe(this) { event ->
             when (event) {
                 is RegisterViewEvent.Loading -> binding.progressBar.visibility = View.VISIBLE
+
                 is RegisterViewEvent.Success -> {
                     binding.progressBar.visibility = View.INVISIBLE
                     val intent = Intent(this, MainActivity::class.java)
@@ -56,7 +57,8 @@ class RegisterActivity : AppCompatActivity() {
             val passwordAgain = binding.txtEtPasswordAgain.text.toString()
 
             if (
-                filePath != null && userName.isNotBlank()
+                filePath != null
+                && userName.isNotBlank()
                 && email.isNotBlank()
                 && password.isNotBlank()
                 && password == passwordAgain
