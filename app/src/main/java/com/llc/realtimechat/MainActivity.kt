@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.llc.realtimechat.databinding.ActivityMainBinding
 import com.llc.realtimechat.detail.DetailActivity
+import com.llc.realtimechat.extension.loadFromUrl
 import com.llc.realtimechat.login.LoginActivity
 import com.llc.realtimechat.model.Chat
 import com.llc.realtimechat.userprofile.ProfileActivity
@@ -21,6 +23,8 @@ import com.llc.realtimechat.userprofile.ProfileActivity
 class MainActivity : AppCompatActivity(),OnItemClickListener{
 
     private lateinit var binding: ActivityMainBinding
+
+    private val db = Firebase.firestore
 
     private val chatRecyclerViewAdapter: ChatRecyclerViewAdapter by lazy {
         ChatRecyclerViewAdapter(this)
@@ -34,6 +38,32 @@ class MainActivity : AppCompatActivity(),OnItemClickListener{
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        val userEmail = FirebaseAuth.getInstance().currentUser!!.email
+
+        db.collection("user").whereEqualTo("email", userEmail).get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+
+                    for (document in document) {
+
+                        binding.imvProfile.loadFromUrl(document.data["profile"].toString())
+
+                        Log.d("TAG", "${document.id}=>${document.data["email"]}")
+                        Log.d("TAG", "$userEmail")
+                    }
+                } else {
+                    Log.d("TAG", "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TAG", "get failed with ", exception)
+            }
+
+
+
+
 
         viewModel.chatListLiveData.observe(this) { chatList ->
             chatRecyclerViewAdapter.submitList(chatList)

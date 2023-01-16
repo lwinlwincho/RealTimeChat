@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.llc.realtimechat.databinding.ProfileActivityBinding
+import com.llc.realtimechat.extension.loadFromUrl
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -30,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
 
                     for (document in document) {
 
+                        binding.imvProfile.loadFromUrl(document.data["profile"].toString())
                         binding.txtEtName.setText(document.data["userName"].toString())
                         binding.txtEtEmail.setText(document.data["email"].toString())
                         binding.txtEtPassword.setText(document.data["password"].toString())
