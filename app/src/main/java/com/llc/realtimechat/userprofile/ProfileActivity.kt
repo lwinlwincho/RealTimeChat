@@ -1,14 +1,13 @@
 package com.llc.realtimechat.userprofile
 
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.llc.realtimechat.databinding.ProfileActivityBinding
 import com.llc.realtimechat.extension.loadFromUrl
+import com.llc.realtimechat.model.User
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -16,50 +15,34 @@ class ProfileActivity : AppCompatActivity() {
 
     private val viewModel: ProfileViewModel by viewModels()
 
-    private val db = Firebase.firestore
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ProfileActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userEmail = FirebaseAuth.getInstance().currentUser!!.email
-
-        db.collection("user").whereEqualTo("email", userEmail).get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-
-                    for (document in document) {
-
-                        binding.imvProfile.loadFromUrl(document.data["profile"].toString())
-                        binding.txtEtName.setText(document.data["userName"].toString())
-                        binding.txtEtEmail.setText(document.data["email"].toString())
-                        binding.txtEtPassword.setText(document.data["password"].toString())
-
-                        Log.d("TAG", "${document.id}=>${document.data["email"]}")
-                        Log.d("TAG", "$userEmail")
-                    }
-                } else {
-                    Log.d("TAG", "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "get failed with ", exception)
-            }
-
-        /*viewModel.oneViewEventLiveData.observe(this) { event ->
+        viewModel.userProfile()
+        viewModel.profileEvent.observe(this) { event ->
             when (event) {
+                is ProfileViewEvent.Loading -> binding.progressBar.visibility = View.VISIBLE
+
                 is ProfileViewEvent.Success -> {
-                    Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
+                    binding.progressBar.visibility = View.INVISIBLE
+                    bind(event.user)
                 }
 
                 is ProfileViewEvent.Error -> {
+                    binding.progressBar.visibility = View.INVISIBLE
                     Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
                 }
                 else -> {}
             }
+        }
+    }
 
-        }*/
-
+    private fun bind(user: User) {
+        binding.imvProfile.loadFromUrl(user.profile)
+        binding.txtEtName.setText(user.userName)
+        binding.txtEtEmail.setText(user.email)
+        binding.txtEtPassword.setText(user.password)
     }
 }

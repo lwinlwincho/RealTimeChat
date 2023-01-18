@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        viewModel.loginViewEventLiveData.observe(this) { event ->
+        viewModel.loginViewEvent.observe(this) { event ->
             when (event) {
                 is LoginViewEvent.Success -> {
                     val intent = Intent(this, MainActivity::class.java)

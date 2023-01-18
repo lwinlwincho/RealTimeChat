@@ -20,6 +20,7 @@ class RegisterActivity : AppCompatActivity() {
     private val viewModel: RegisterViewModel by viewModels()
 
     private val PICK_IMAGE_REQUEST = 1
+
     private var filePath: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel.registerViewEventLiveData.observe(this) { event ->
+        viewModel.registerViewEvent.observe(this) { event ->
             when (event) {
                 is RegisterViewEvent.Loading -> binding.progressBar.visibility = View.VISIBLE
 

@@ -10,15 +10,14 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.llc.realtimechat.SingleLiveEvent
-import com.llc.realtimechat.detail.UpdateChatEvent
-import com.llc.realtimechat.model.Chat
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.tasks.await
 
 class RegisterViewModel : ViewModel() {
 
-    val registerViewEventLiveData = SingleLiveEvent<RegisterViewEvent>()
+    private var _registerViewEvent = SingleLiveEvent<RegisterViewEvent>()
+    val registerViewEvent = _registerViewEvent
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -33,7 +32,7 @@ class RegisterViewModel : ViewModel() {
         password: String
     ) {
         viewModelScope.launch {
-            registerViewEventLiveData.postValue(RegisterViewEvent.Loading)
+            _registerViewEvent.postValue(RegisterViewEvent.Loading)
             try {
                 // Create Auth
                 val authResult = auth.createUserWithEmailAndPassword(email, password).await()
@@ -55,12 +54,12 @@ class RegisterViewModel : ViewModel() {
                         "password" to password
                     )
 
-                    val documentRef=db.collection("user").add(userInfo).await()
+                    db.collection("user").add(userInfo).await()
 
-                    registerViewEventLiveData.postValue(RegisterViewEvent.Success(documentRef.id))
+                    _registerViewEvent.postValue(RegisterViewEvent.Success)
                 }
             } catch (e: Exception) {
-                registerViewEventLiveData.postValue(RegisterViewEvent.Error(e.message.toString()))
+                _registerViewEvent.postValue(RegisterViewEvent.Error(e.message.toString()))
             }
         }
     }
@@ -74,8 +73,7 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.createUserWithEmailAndPassword(email, password)
-                    .addOnSuccessListener { task ->
-
+                    .addOnSuccessListener {
                         uploadAndDownloadImage(
                             filePath = filePath,
                             success = { imageUrl ->
@@ -90,10 +88,10 @@ class RegisterViewModel : ViewModel() {
                         )
                     }
                     .addOnFailureListener {
-                        registerViewEventLiveData.postValue(RegisterViewEvent.Error(it.localizedMessage.orEmpty()))
+                        _registerViewEvent.postValue(RegisterViewEvent.Error(it.localizedMessage.orEmpty()))
                     }
             } catch (e: Exception) {
-                registerViewEventLiveData.postValue(RegisterViewEvent.Error(e.message.toString()))
+                _registerViewEvent.postValue(RegisterViewEvent.Error(e.message.toString()))
             }
         }
     }
@@ -107,7 +105,7 @@ class RegisterViewModel : ViewModel() {
                 success.invoke(imageUri.toString())
             }
         }.addOnFailureListener {
-            registerViewEventLiveData.postValue(RegisterViewEvent.Error(it.message.toString()))
+            _registerViewEvent.postValue(RegisterViewEvent.Error(it.message.toString()))
         }
     }
 
@@ -115,12 +113,12 @@ class RegisterViewModel : ViewModel() {
         db.collection("user")
             .add(user)
             .addOnSuccessListener {
-                registerViewEventLiveData.postValue(
-                    RegisterViewEvent.Success(it.id)
+                _registerViewEvent.postValue(
+                    RegisterViewEvent.Success
                 )
             }
             .addOnFailureListener {
-                registerViewEventLiveData.postValue(
+                _registerViewEvent.postValue(
                     RegisterViewEvent.Error(it.localizedMessage.orEmpty())
                 )
             }
@@ -129,6 +127,6 @@ class RegisterViewModel : ViewModel() {
 
 sealed class RegisterViewEvent {
     object Loading : RegisterViewEvent()
-    data class Success(val id : String) : RegisterViewEvent()
+    object Success : RegisterViewEvent()
     data class Error(val message: String) : RegisterViewEvent()
 }

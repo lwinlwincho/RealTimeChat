@@ -29,7 +29,6 @@ class DetailViewModel : ViewModel() {
 }
 
 sealed class UpdateChatEvent {
-    data class SuccessShow(val updateEvent: Chat) : UpdateChatEvent()
     data class SuccessUpdate(val message: String) : UpdateChatEvent()
     data class SuccessDelete(val message: String) : UpdateChatEvent()
     data class Error(val error: String) : UpdateChatEvent()
